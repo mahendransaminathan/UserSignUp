@@ -22,13 +22,9 @@ builder.Services.AddSingleton<CosmosClient>(sp =>
 
     return new CosmosClient(cosmosEndPoint, cosmosKey);
 });
-builder.Services.AddSingleton<IUserRepository>(sp =>
-{
-    var cosmosClient = sp.GetRequiredService<CosmosClient>(); 
-    var configuration = sp.GetRequiredService<IConfiguration>();   
-    return new UserRepository(cosmosClient, configuration);
-});
 
+builder.Services.AddSingleton<IUserRepository, UserRepository>();
+builder.Services.AddSingleton<IConfiguration>(sp => sp.GetRequiredService<IConfiguration>());
 builder.Services.AddMediatR(cfg => 
     cfg.RegisterServicesFromAssemblies(
         typeof(Program).Assembly,
