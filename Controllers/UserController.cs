@@ -27,7 +27,7 @@ namespace Controllers
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{email}")]
         public async Task<IActionResult> GetUser(string email)
         {
             // Assuming you have a method to get a user by ID
