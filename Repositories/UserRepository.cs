@@ -1,18 +1,32 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Models;
+using Microsoft.Azure.Cosmos;
+using Newtonsoft.Json;
 
 namespace Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly List<User> _users = new List<User>();
+        private readonly List<Models.User> _users = new List<Models.User>();
 
-        public Task<IEnumerable<User>> GetUserByEmail(string email)
+        private readonly CosmosClient _cosmosClient;
+
+        private readonly Database _database;
+        private readonly Container _container;
+
+        UserRepository(CosmosClient cosmosClient)
         {
-            var users = _users.Where(u => u.Email == email);
-            return Task.FromResult(users);
+            _cosmosClient = cosmosClient;
+            _database = _cosmosClient.GetDatabase("CosmosDB:DatabaseName");
+            _container = _database.GetContainer("CosmosDB:ContainerName");
         }
 
-        public Task<bool> UpdateUser(User user)
+        public Task<IEnumerable<Models.User>> GetUserByEmail(string email)
+        {
+            return Task.FromResult(_container.GetItemLinqQueryable<Models.User>().Where(u => u.Email == email).ToList().AsEnumerable());
+        }
+
+        public Task<bool> UpdateUser(Models.User user)
         {
             var existingUser = _users.FirstOrDefault(u => u.Email == user.Email);
             if (existingUser != null)
@@ -35,10 +49,10 @@ namespace Repositories
             return Task.FromResult(false);
         }
 
-        public Task<User> CreateUser(User user)
+        public Task<Models.User> CreateUser(Models.User user)
         {
-            _users.Add(user);
-            return Task.FromResult(user);
+            // _users.Add(user);
+            return Task.FromResult(_container.CreateItemAsync(user, new PartitionKey(user.Email)).Result.Resource);
         }
 
     }
