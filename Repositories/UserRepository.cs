@@ -14,13 +14,19 @@ namespace Repositories
         private readonly Database _database;
         private readonly Container _container;
 
-        public UserRepository(CosmosClient cosmosClient)
+        public UserRepository(CosmosClient cosmosClient, IConfiguration configuration)
         {
             _cosmosClient = cosmosClient;
-            _database = _cosmosClient.GetDatabase("CosmosDB:DatabaseName");
-            _container = _database.GetContainer("CosmosDB:ContainerName");
-        }
+            var databaseName = Environment.GetEnvironmentVariable("CosmosDB:DatabaseName") 
+                               ?? configuration["CosmosDB:DatabaseName"];
 
+            var containerName = Environment.GetEnvironmentVariable("CosmosDB:ContainerName") 
+                                ?? configuration["CosmosDB:ContainerName"];
+
+            _database = _cosmosClient.GetDatabase(databaseName);
+            _container = _database.GetContainer(containerName);
+        }
+        
         public Task<IEnumerable<Models.User>> GetUserByEmail(string email)
         {
             return Task.FromResult(_container.GetItemLinqQueryable<Models.User>().Where(u => u.Email == email).ToList().AsEnumerable());

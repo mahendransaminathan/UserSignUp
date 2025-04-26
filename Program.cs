@@ -16,8 +16,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddSingleton<CosmosClient>(sp =>
 {
-
-    var configuration = sp.GetRequiredService<IConfiguration>();
+    var configuration = sp.GetRequiredService<IConfiguration>();    
     var cosmosEndPoint = Environment.GetEnvironmentVariable("CosmosDB:EndpointUri") ?? configuration["CosmosDB:EndpointUri"];
     var cosmosKey = Environment.GetEnvironmentVariable("CosmosDB:PrimaryKey") ?? configuration["CosmosDB:PrimaryKey"];
 
@@ -25,8 +24,9 @@ builder.Services.AddSingleton<CosmosClient>(sp =>
 });
 builder.Services.AddSingleton<IUserRepository>(sp =>
 {
-    var cosmosClient = sp.GetRequiredService<CosmosClient>();    
-    return new UserRepository(cosmosClient);
+    var cosmosClient = sp.GetRequiredService<CosmosClient>(); 
+    var configuration = sp.GetRequiredService<IConfiguration>();   
+    return new UserRepository(cosmosClient, configuration);
 });
 
 builder.Services.AddMediatR(cfg => 
