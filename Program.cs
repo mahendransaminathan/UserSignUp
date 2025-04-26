@@ -24,7 +24,7 @@ builder.Services.AddSingleton<CosmosClient>(sp =>
 });
 
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
-builder.Services.AddSingleton<IConfiguration>(sp => sp.GetRequiredService<IConfiguration>());
+
 builder.Services.AddMediatR(cfg => 
     cfg.RegisterServicesFromAssemblies(
         typeof(Program).Assembly,
