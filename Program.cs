@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Azure.Cosmos;
+
+
 using Repositories;
 using Models;
 
@@ -19,7 +21,6 @@ builder.Services.AddSingleton<CosmosClient>(sp =>
     var cosmosEndPoint = Environment.GetEnvironmentVariable("CosmosDB:EndpointUri") ?? configuration["CosmosDB:EndpointUri"];
     var cosmosKey = Environment.GetEnvironmentVariable("CosmosDB:PrimaryKey") ?? configuration["CosmosDB:PrimaryKey"];
 
-    var connectionString = builder.Configuration.GetConnectionString("CosmosDB:ConnectionString");
     return new CosmosClient(cosmosEndPoint, cosmosKey);
 });
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
@@ -34,15 +35,17 @@ builder.Services.AddMediatR(cfg =>
         typeof(CQRS.Queries.GetUsersQuery).Assembly
     )
 );
-// builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<CQRS.Commands.UpdateUserCommand>());
+
+// Setup CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowLocalhost",
-        builder => builder.WithOrigins("http://localhost:3000")
-        .AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader());    
+    options.AddPolicy("AllowLocalhost", policy =>
+        policy.WithOrigins("http://localhost:3000")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+    );
 });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -52,6 +55,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
+app.UseCors("AllowLocalhost"); // <-- Added this!
 app.UseHttpsRedirection();
 app.MapControllers();
 
