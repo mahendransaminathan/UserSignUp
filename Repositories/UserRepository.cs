@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Models;
 using Microsoft.Azure.Cosmos;
 using Newtonsoft.Json;
+using System.Configuration;
 
 namespace Repositories
 {
@@ -14,12 +15,14 @@ namespace Repositories
         private readonly Database _database;
         private readonly Container _container;
 
-        public UserRepository(CosmosClient cosmosClient)
+        public UserRepository(CosmosClient cosmosClient, IConfiguration configuration)
         {
             _cosmosClient = cosmosClient;
             var databaseName = Environment.GetEnvironmentVariable("CosmosDB:DatabaseName");
-
             var containerName = Environment.GetEnvironmentVariable("CosmosDB:ContainerName");
+
+            // var databaseName = configuration["CosmosDB:DatabaseName"]; // Replace with your database name
+            // var containerName = configuration["CosmosDB:ContainerName"]; // Replace with your container name
 
             _database = _cosmosClient.GetDatabase(databaseName);
             _container = _database.GetContainer(containerName);
@@ -56,7 +59,7 @@ namespace Repositories
         public Task<Models.User> CreateUser(Models.User user)
         {
             // _users.Add(user);
-            return Task.FromResult(_container.CreateItemAsync(user, new PartitionKey(user.Email)).Result.Resource);
+            return Task.FromResult(_container.UpsertItemAsync(user, new PartitionKey(user.Id)).Result.Resource);
         }
 
     }

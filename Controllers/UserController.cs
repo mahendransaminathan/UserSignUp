@@ -24,7 +24,7 @@ namespace Controllers
         public async Task<IActionResult> CreateUser([FromBody] CreateUserCommand command)
         {
             var user = await _mediator.Send(command);
-            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
+            return CreatedAtAction(nameof(GetUser), new { email = user.Email }, user);
         }
 
         [HttpGet("{email}")]

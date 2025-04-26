@@ -20,7 +20,9 @@ builder.Services.AddSingleton<CosmosClient>(sp =>
     var cosmosEndPoint = Environment.GetEnvironmentVariable("CosmosDB:EndpointUri") ?? configuration["CosmosDB:EndpointUri"];
     var cosmosKey = Environment.GetEnvironmentVariable("CosmosDB:PrimaryKey") ?? configuration["CosmosDB:PrimaryKey"];
 
-    return new CosmosClient(cosmosEndPoint, cosmosKey);
+    // var cosmosEndPoint = configuration["CosmosDB:EndpointUri"];
+    // var cosmosKey = configuration["CosmosDB:PrimaryKey"];
+     return new CosmosClient(cosmosEndPoint, cosmosKey);
 });
 
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
