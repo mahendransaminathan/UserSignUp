@@ -27,10 +27,7 @@ builder.Services.AddSingleton<IUserRepository, UserRepository>();
 
 builder.Services.AddMediatR(cfg => 
     cfg.RegisterServicesFromAssemblies(
-        typeof(Program).Assembly,
-        typeof(Models.User).Assembly,
-        typeof(Repositories.UserRepository).Assembly,
-        typeof(Controllers.UserController).Assembly,
+        typeof(Program).Assembly,        
         typeof(CQRS.Commands.CreateUserCommand).Assembly,
         typeof(CQRS.Queries.GetUsersQuery).Assembly
     )
