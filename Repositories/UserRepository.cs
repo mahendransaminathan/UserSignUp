@@ -14,7 +14,7 @@ namespace Repositories
         private readonly Database _database;
         private readonly Container _container;
 
-        UserRepository(CosmosClient cosmosClient)
+        public UserRepository(CosmosClient cosmosClient)
         {
             _cosmosClient = cosmosClient;
             _database = _cosmosClient.GetDatabase("CosmosDB:DatabaseName");
