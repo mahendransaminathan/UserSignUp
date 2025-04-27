@@ -30,6 +30,12 @@ builder.Services.AddSingleton<CosmosClient>(sp =>
     var cosmosEndPoint = Environment.GetEnvironmentVariable("COSMOS_DB_ENDPOINT");
     var cosmosKey = Environment.GetEnvironmentVariable("COSMOS_DB_KEY");
 
+
+    if (string.IsNullOrEmpty(cosmosEndPoint) || string.IsNullOrEmpty(cosmosKey))
+    {
+        throw new InvalidOperationException("Cosmos DB configuration is missing.");
+    }
+
     // var cosmosEndPoint = configuration["ConnectionStrings:Endpoint"];
     // var cosmosKey = configuration["ConnectionStrings:PrimaryKey"];
      return new CosmosClient(cosmosEndPoint, cosmosKey);
