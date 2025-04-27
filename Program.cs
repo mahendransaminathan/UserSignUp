@@ -17,8 +17,8 @@ builder.Services.AddControllers();
 builder.Services.AddSingleton<CosmosClient>(sp =>
 {
     var configuration = sp.GetRequiredService<IConfiguration>();    
-    var cosmosEndPoint = Environment.GetEnvironmentVariable("CosmosDB:EndpointUri") ?? configuration["CosmosDB:EndpointUri"];
-    var cosmosKey = Environment.GetEnvironmentVariable("CosmosDB:PrimaryKey") ?? configuration["CosmosDB:PrimaryKey"];
+    var cosmosEndPoint = Environment.GetEnvironmentVariable("COSMOS_DB_ENDPOINT");
+    var cosmosKey = Environment.GetEnvironmentVariable("COSMOS_DB_KEY");
 
     // var cosmosEndPoint = configuration["CosmosDB:EndpointUri"];
     // var cosmosKey = configuration["CosmosDB:PrimaryKey"];

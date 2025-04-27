@@ -18,11 +18,9 @@ namespace Repositories
         public UserRepository(CosmosClient cosmosClient, IConfiguration configuration)
         {
             _cosmosClient = cosmosClient;
-            var databaseName = Environment.GetEnvironmentVariable("CosmosDB:DatabaseName");
-            var containerName = Environment.GetEnvironmentVariable("CosmosDB:ContainerName");
-
-            // var databaseName = configuration["CosmosDB:DatabaseName"]; // Replace with your database name
-            // var containerName = configuration["CosmosDB:ContainerName"]; // Replace with your container name
+            
+            var databaseName = configuration["CosmosDB:DatabaseName"]; // Replace with your database name
+            var containerName = configuration["CosmosDB:ContainerName"]; // Replace with your container name
 
             _database = _cosmosClient.GetDatabase(databaseName);
             _container = _database.GetContainer(containerName);
