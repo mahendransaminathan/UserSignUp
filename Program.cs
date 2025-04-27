@@ -37,17 +37,14 @@ builder.Services.AddSingleton<CosmosClient>(sp =>
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-
 builder.Services.AddMediatR(cfg => 
-    cfg.RegisterServicesFromAssemblyContaining<Program>()
+    cfg.RegisterServicesFromAssemblies(
+        typeof(Program).Assembly,        
+        typeof(CQRS.Commands.CreateUserCommand).Assembly,
+        typeof(CQRS.Queries.GetUsersQuery).Assembly
+    )
 );
 
-builder.Services.AddMediatR(cfg => 
-    cfg.RegisterServicesFromAssemblyContaining<CQRS.Commands.CreateUserCommand>()
-);
-builder.Services.AddMediatR(cfg => 
-    cfg.RegisterServicesFromAssemblyContaining<CQRS.Queries.GetUsersQuery>()
-);
 
 var app = builder.Build();
 

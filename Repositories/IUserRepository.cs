@@ -6,7 +6,7 @@ namespace Repositories
     {
         Task<IEnumerable<User>> GetUserByEmail(string email);        
         Task<User> CreateUser(User user);
-        Task<bool> UpdateUser(User user);
-        Task<bool> DeleteUser(string email);
+        // Task<bool> UpdateUser(User user);
+        // Task<bool> DeleteUser(string email);
     }
 }
