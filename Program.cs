@@ -33,7 +33,10 @@ builder.Services.AddSingleton<CosmosClient>(sp =>
 
     if (string.IsNullOrEmpty(cosmosEndPoint) || string.IsNullOrEmpty(cosmosKey))
     {
+        var logger = sp.GetRequiredService<ILogger<Program>>();
+        logger.LogError("Cosmos DB configuration is missing.");
         throw new InvalidOperationException("Cosmos DB configuration is missing.");
+        
     }
 
     // var cosmosEndPoint = configuration["ConnectionStrings:Endpoint"];
