@@ -14,6 +14,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 
+// Setup CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost", policy =>
+        policy.WithOrigins("http://localhost:3000")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+    );
+});
+
 builder.Services.AddSingleton<CosmosClient>(sp =>
 {
     var configuration = sp.GetRequiredService<IConfiguration>();    
@@ -25,7 +35,7 @@ builder.Services.AddSingleton<CosmosClient>(sp =>
      return new CosmosClient(cosmosEndPoint, cosmosKey);
 });
 
-builder.Services.AddSingleton<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddMediatR(cfg => 
     cfg.RegisterServicesFromAssemblies(
@@ -35,16 +45,6 @@ builder.Services.AddMediatR(cfg =>
     )
 );
 
-// Setup CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowLocalhost", policy =>
-        policy.WithOrigins("http://localhost:3000")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-    );
-});
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -53,9 +53,9 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseRouting();
-app.UseCors("AllowLocalhost"); // <-- Added this!
 app.UseHttpsRedirection();
+app.UseCors("AllowLocalhost"); // <-- Added this!
+app.UseRouting();
 app.MapControllers();
 
 
